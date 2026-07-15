@@ -1,6 +1,6 @@
 # Skills
 
-Personal agent skills for Claude Code (and other agents).
+Personal agent skills.
 
 ## Install
 
