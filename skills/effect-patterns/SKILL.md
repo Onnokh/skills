@@ -13,6 +13,11 @@ description: >-
   handle…" questions. Not for generic side effects, React useEffect,
   audio/sound effects, Effect scheduler internals, or non-Effect libraries
   like Zod or Drizzle.
+compatibility: >-
+  Requires Effect v4. The APIs throughout (Schema.TaggedErrorClass,
+  Context.Service, Schema.toTaggedUnion, Config.schema, Layer.effectContext)
+  do not exist in v3, and v3 idioms (Effect.Service, Schema.TaggedError) are
+  not what this skill teaches.
 ---
 
 # Effect Patterns
@@ -21,6 +26,14 @@ Battle-tested conventions for large Effect-TS codebases. The value is
 *uniformity at scale*: every module follows the same skeleton, so any file is
 navigable the moment you've seen one — dependency wiring stays type-safe, and
 validation, errors, and IDs flow through a single `Schema`-based layer.
+
+**Effect v4 only.** None of this works on v3 — the API surface is different
+(`Schema.TaggedErrorClass` vs v3's `Schema.TaggedError`, `Context.Service` vs
+`Effect.Service`, and so on). When an API question isn't answered here, check
+in order: the nearest `AGENTS.md` / project Effect practices doc, the
+project-pinned `effect` package source and version in `node_modules`, and
+current upstream Effect source — before guessing from training data, which
+skews v3.
 
 ## How to use this skill
 
