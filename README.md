@@ -9,7 +9,7 @@ Personal agent skills.
 npx skills add Onnokh/skills
 
 # a single skill
-npx skills add Onnokh/skills --skill example-skill
+npx skills add Onnokh/skills --skill <skill-name>
 ```
 
 ## Adding a skill
