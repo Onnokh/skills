@@ -71,5 +71,14 @@ and every caveat names its handling.
 
 ## After go
 
-Execute the plan items in order under the contract from Step 3, keeping
-each Linear issue's status current as its work starts and lands.
+Execute the plan items in order under the contract from Step 3. For each
+issue:
+
+- **Pick-up** — set the Linear issue to In Progress before its first change.
+- **Landing** — when its commit lands and its checks pass, leave a Linear
+  comment naming what changed, the commit hash, and how it was verified,
+  then move the issue to the workflow's next status.
+- **Chat** — report in chat after each issue lands: one or two lines on what
+  landed and what is next. Surface a blocker the moment it stops progress.
+
+When the MRs open, comment each MR link on every issue it delivers.
