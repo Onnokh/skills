@@ -17,7 +17,7 @@ Every tool takes a **`site`** argument: a configured site ID, not a URL — `sle
 | --- | --- |
 | What pages performed well? What needs optimizing? | `pages` (optional `window`) — every page with window deltas, plan context, signals, and a `verdict` + `reasons` |
 | Why is this page flagged? Deep dive | `page` (`path`) — plan, rationale, daily series, top queries, baseline, and logged actions |
-| Where are the opportunities? What should we make or improve? | `opportunities` (optional `kind`: `striking-distance`\|`ctr`\|`new-demand`\|`cannibalization`) |
+| Where are the opportunities? What should we make or improve? | `opportunities` (optional `kind`: `striking-distance`\|`ctr`\|`new-demand`\|`cannibalization`; optional `limit`, default 50) — signals come strongest-first, and `totalSignals` says how many matched beyond the limit |
 | What is the plan? What was set out, and when? | `registry` (targets, intents, phases, publish dates) and `log` (interventions) |
 | What queries are we seen for? | `queries` (optional `page`, `minImpressions`, `includeBrand`, `limit`, `window`) |
 | Are our pages indexed? | `registry` or `pages` — each target carries `indexed` (`indexed`/`not-indexed`/`unknown`) |
