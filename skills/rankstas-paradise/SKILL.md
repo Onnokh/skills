@@ -18,7 +18,7 @@ Every tool takes a **`site`** argument: a configured site ID, not a URL. There i
 | `printfeest` | `https://www.printfeest.nl` |
 | `shadertown` | `https://www.shadertown.com` |
 
-Data is served from the hosted deployment, kept current by a daily server-side sync — you never fetch from Google yourself. If a site ID is refused, read `GET /api/sites` (see "Site settings" below) rather than guessing.
+Data is served from the hosted deployment, kept current by a daily server-side sync — you never fetch from Google yourself.
 
 ## Question → tool
 
@@ -44,7 +44,7 @@ Every keyword number a site reports is measured in one **Market** — a DataForS
 
 - `registry_health`, `registry`, `queries`, `opportunities` and `keywords_proposed` all name the `market` their numbers describe. **Read it first.** A Dutch site reporting `United States / en` is misconfigured, not undemanded — a real case moved from 10 to 2,920 monthly searches on that one setting.
 - `market.provider` says `labs` or `google-ads` **in advance**. Google-Ads countries (49 of them) report no `difficulty` and no `intent` at all, so an absent difficulty there is the country, not an error.
-- **No MCP tool sets the Market**, and neither the Mac app nor the TUI can. It is a Site setting, written over HTTP (see below).
+- A wrong Market is a **Site setting** to correct, not a Registry row to patch. Say so and confirm with the user, then re-read `registry_health`: the metrics store is keyed by market, so a corrected Market starts with an empty cache and every planned Keyword is re-asked at the vendor.
 
 Two absences mean different things, and neither is a zero: **no `demand` key** means nothing was asked (no key, no sync, or a brand/operator query that is never worth paying for); a **null `searchVolume`** means DataForSEO was asked and reports the term as too rare, which is not the same as nobody searching it.
 
@@ -92,18 +92,3 @@ Call `log_add` with `{ site, path, kind, date?, note? }`.
 - Edit existing rows with `registry_set` — `{ site, target, keyword?, patch: { … } }`. Patch fields: `cluster`, `intent`, `priority`, `publishedAt`, `baselineDate`, `status`, `whyOpportunity`, `newTargetUrl`. Without `keyword` every row of the target is patched; with it, only that row. `newTargetUrl` remaps rows to another page (consolidating cannibalized keywords). Fields must not contain commas; the tool validates and refuses duplicates.
 - There is **no `country` on a Registry row.** The market a row's numbers describe belongs to the Site — two rows of one site cannot be in different markets. Set the Site's Market instead.
 - **Confirm with the user before editing the registry** — it is the plan of record.
-
-## Site settings (over HTTP, not MCP)
-
-Some things no MCP tool can reach — the Market above all. The server is `https://seo.onkie.dev`, and the client credentials sit in `~/.config/rankstas-paradise/client.json` (`apiUrl`, `token`). Read them with shell substitution so the token never enters your context or a transcript:
-
-```bash
-C=~/.config/rankstas-paradise/client.json
-API=$(jq -r .apiUrl $C); TOKEN=$(jq -r .token $C)
-curl -sS -H "Authorization: Bearer $TOKEN" "$API/api/sites" | jq '.'
-```
-
-- `GET /api/sites` — every site with its resolved settings and Market.
-- `PUT /api/sites/:id/settings` — **replaces the whole entry.** Body is `SiteSettings`: `siteUrl` required (the Search Console property), plus optional `name`, `origin`, `sitemapUrl`, `brandTerms`, `analytics`, `revenue`, `market`. GET first and send every block back, or you will silently drop the site's analytics or revenue provider. Send `market` as `{ locationCode, languageCode }` — e.g. the Netherlands is `{ "locationCode": 2528, "languageCode": "nl" }`.
-- `POST /api/jobs/sync?site=<id>` — run a sync now. Needed after a Market change: the metrics store is keyed by market, so the new Market starts with an empty cache and re-asks the vendor for every planned keyword.
-- **Confirm with the user before changing Site settings**, and say what it will re-fetch.
