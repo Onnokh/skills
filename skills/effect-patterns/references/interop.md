@@ -21,7 +21,7 @@ yield* Effect.tryPromise({
 yield* Effect.promise(() => sdk.warmup())
 
 // Callback / event-based API:
-yield* Effect.async<Data, ReadError>((resume) => {
+yield* Effect.callback<Data, ReadError>((resume) => {
   stream.on("data", (d) => resume(Effect.succeed(d)))
   stream.on("error", (e) => resume(Effect.fail(new ReadError({ cause: e }))))
 })
@@ -62,6 +62,16 @@ async function handler(args) {
 - `runPromise` / `runPromiseExit` — async edge (most common).
 - `runSync` — only for effects you know are synchronous.
 - `runFork` — start a long-running effect and get a fiber back.
+
+For an HTTP server the edge is `HttpRouter.toWebHandler(appLayer, { memoMap })`
+from `effect/http`. Pass the runtime's `memoMap` so the handler reuses the layer
+instances the runtime already built; `disableLogger: true` drops the
+per-request log middleware. Wire everything handlers read (services, the logger
+and tracer layers) into the handler layer with `Layer.provideMerge`.
+`Layer.provide` type-checks too, but the request fiber then lacks the service
+(a 500) or logs through the default logger. `HttpApiBuilder.layer(api)` from
+`effect/http-api` also needs `HttpServer.layerServices` (its `FileSystem` is a
+no-op; use the platform package's layer when handlers read files).
 
 Everything between the entry point and the leaves stays as `Effect` values. If
 you find `runPromise` in the middle of a module, that's a smell — the boundary has

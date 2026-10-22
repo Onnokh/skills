@@ -1,11 +1,12 @@
 # Outgoing HTTP
 
-Prefer Effect's HTTP client modules (`effect/unstable/http/HttpClient`,
-`HttpClientRequest`, `HttpClientResponse`, `HttpClientError`) for outgoing HTTP
-in application and provider code — their typed errors, layers, and client
+Prefer Effect's HTTP client modules (`HttpClient`, `HttpClientRequest`,
+`HttpClientResponse`, `HttpClientError`, all from `effect/http`) for outgoing
+HTTP in application and provider code — their typed errors, layers, and client
 transforms compose with everything else in this skill. Raw `fetch` remains a
 deliberate choice for platform transports, browser/edge constraints, or
-libraries that intentionally avoid the unstable HTTP APIs.
+libraries that intentionally avoid the HTTP modules, which are still marked
+`@stability unstable`.
 
 ## The adapter owns the whole boundary
 
@@ -28,6 +29,9 @@ transactions.
 ## The useful API surface
 
 - `HttpClient.get/post/put/patch/del/execute` — service accessors.
+- `FetchHttpClient.layer` — the client backed by `fetch`. `FetchHttpClient.Fetch`
+  is a `Context.Reference`; `Effect.provideService(FetchHttpClient.Fetch, myFetch)`
+  swaps the fetch function (tests, instrumented transports).
 - `HttpClient.mapRequest(...)` / `mapRequestEffect(...)` — configured client
   transforms (base URL, auth applied once for the whole client).
 - `HttpClientRequest.prependUrl(...)`, `.bearerToken(...)`, `.acceptJson`.
@@ -43,11 +47,18 @@ transactions.
 Three tiers, from generic to domain-aware:
 
 - `HttpClient.retryTransient(...)` — the standard sweep for transport errors,
-  timeouts, and 408/429/500/502/503/504.
+  timeouts, and 408/429/500/502/503/504, honouring `Retry-After`. Always pass
+  `times` or a `schedule`: with neither it retries without limit. Order
+  matters: an `HttpClient.transform` piped *before* it runs once per attempt,
+  one piped after wraps all attempts.
 - `HttpClient.withRateLimiter(...)` — proactive pacing that learns from
-  rate-limit / `Retry-After` headers. Requires a `RateLimiter` plus initial
+  rate-limit / `Retry-After` headers. Requires a `limiter` plus initial
   window/limit/key options; adds `RateLimiterError` to the error channel and
-  retries 429 by default.
+  retries 429 by default. `RateLimiter` lives in `effect/persistence`, and
+  `RateLimiter.layer` needs a store (`RateLimiter.layerStoreMemory`, or the
+  Redis store for limits shared across processes). Called directly,
+  `consume({ onExceeded: "delay" })` returns the delay and does not sleep; use
+  `RateLimiter.sleep` or `makeWithRateLimiter` to wait.
 - Operation-level `Effect.retry(...)` — when retry depends on domain-specific
   typed errors or idempotency rules, e.g. a schedule that honors a provider's
   `retryAfterMs` field. See the rate-limit-aware schedule in

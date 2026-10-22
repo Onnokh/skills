@@ -9,7 +9,7 @@ generation right next to the type it produces.
 ## The shape
 
 ```ts
-export const MessageID = Schema.String.check(Schema.isStartsWith("msg")).pipe(
+export const MessageID = Schema.String.check(Schema.isStartingWith("msg")).pipe(
   Schema.brand("MessageID"),
   statics((s) => ({
     ascending: (id?: string) => s.make(Identifier.ascending("message", id)),
@@ -19,7 +19,7 @@ export type MessageID = Schema.Schema.Type<typeof MessageID>
 ```
 
 Three things stacked with `.pipe`:
-1. `Schema.String.check(Schema.isStartsWith("msg"))` — must be a string starting
+1. `Schema.String.check(Schema.isStartingWith("msg"))` — must be a string starting
    with the prefix.
 2. `Schema.brand("MessageID")` — nominal type so it can't be confused with other
    string IDs.
@@ -50,7 +50,7 @@ The callback receives the schema, so factories can call `schema.make(...)` to
 produce a value already typed with the brand:
 
 ```ts
-export const ID = Schema.String.check(Schema.isStartsWith("per")).pipe(
+export const ID = Schema.String.check(Schema.isStartingWith("per")).pipe(
   Schema.brand("Permission.ID"),
   statics((schema) => ({
     create: (id?: string) => schema.make(id ?? "per_" + ascending()),

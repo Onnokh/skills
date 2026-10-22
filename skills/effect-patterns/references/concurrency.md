@@ -23,8 +23,9 @@ const child = yield* work.pipe(Effect.forkChild)
 
 `forkScoped` / `forkIn(scope)` are the workhorses: the fiber is interrupted
 automatically when the scope closes, so shutdown is orderly and there are no
-dangling background tasks. A truly detached daemon is a deliberate, rare choice —
-reach for the scoped variants by default. (Effect's API has moved toward
+dangling background tasks. A truly detached daemon (`Effect.forkDetach`; v4 has
+no `forkDaemon`) is a deliberate, rare choice — reach for the scoped variants by
+default. (Effect's API has moved toward
 scope-bound forking precisely because bare `fork` made leaks too easy.)
 
 ## Shared state: pick the primitive by the coordination shape

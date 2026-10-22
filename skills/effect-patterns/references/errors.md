@@ -1,6 +1,6 @@
 # Typed errors
 
-Errors are `Schema.TaggedErrorClass` definitions. Because they're schemas, they
+Errors are `Schema.TaggedError` definitions. Because they're schemas, they
 serialize and validate like any other data; because they're tagged, they flow
 through Effect's typed error channel and narrow under `catchTag`. The error type
 becomes part of the effect's signature, so the compiler tells you which failures
@@ -9,7 +9,7 @@ a caller still has to handle.
 ## Defining an error
 
 ```ts
-export class AccountRepoError extends Schema.TaggedErrorClass<AccountRepoError>()(
+export class AccountRepoError extends Schema.TaggedError<AccountRepoError>()(
   "AccountRepoError",
   {
     message: Schema.String,
@@ -46,7 +46,7 @@ export const ErrorReason = Schema.Union([
   // ...
 ]).pipe(Schema.toTaggedUnion("_tag"))
 
-export class ServiceError extends Schema.TaggedErrorClass<ServiceError>()("ServiceError", {
+export class ServiceError extends Schema.TaggedError<ServiceError>()("ServiceError", {
   module: Schema.String,
   method: Schema.String,
   reason: ErrorReason,
@@ -90,14 +90,14 @@ reflects what's left to handle.
 
 For trivial errors that only carry a couple of fields and never need schema
 serialization, a thin `NamedError.create("Tag", { ...fields })` factory is an
-acceptable shorthand. Reach for full `TaggedErrorClass` when the error needs
+acceptable shorthand. Reach for full `TaggedError` when the error needs
 proper schema fields, a `Defect` cause, a reason union, or computed getters —
 i.e. anything beyond a name and a message.
 
 ## Why schemas for errors
 
 - **Typed channel** — failures are in the effect type, not stringly-typed throws.
-- **Serializable** — a `TaggedErrorClass` crosses a process/wire boundary and
+- **Serializable** — a `TaggedError` crosses a process/wire boundary and
   decodes back into the same class.
 - **Narrowable** — `catchTag`/`catchTags` give exhaustive, compiler-checked
   handling per failure mode.

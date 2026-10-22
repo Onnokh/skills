@@ -15,9 +15,9 @@ Config reads belong in layers (startup/boundary), not in business workflows:
 export const layerFromEnvironment = Layer.effect(
   Configuration.Service,
   Effect.gen(function* () {
-    const apiKey = yield* Config.redacted("API_KEY")
-    const optionalModel = yield* Config.option(Config.string("MODEL"))
-    const enabled = yield* Config.boolean("FEATURE_ENABLED").pipe(
+    const apiKey = yield* Config.Redacted("API_KEY")
+    const optionalModel = yield* Config.option(Config.String("MODEL"))
+    const enabled = yield* Config.Boolean("FEATURE_ENABLED").pipe(
       Config.withDefault(false),
     )
     return Configuration.Service.of({ apiKey, optionalModel, enabled })
@@ -31,7 +31,7 @@ Each combinator encodes a distinct policy — pick the one that says what you me
 
 | Recipe | Meaning |
 | --- | --- |
-| `Config.redacted("KEY")` | credential — value is wrapped so it can't leak into logs |
+| `Config.Redacted("KEY")` | credential — value is wrapped so it can't leak into logs |
 | `Config.schema(SomeSchema, "KEY")` | refined/validated value (branded paths, ports, URLs) |
 | `Config.option(...)` | absence is semantic ("no model configured") |
 | `Config.withDefault(v)` | *missing* data gets a default — malformed values still fail |

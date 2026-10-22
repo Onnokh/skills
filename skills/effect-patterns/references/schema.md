@@ -12,7 +12,7 @@ validator separately — they drift.
 | `Schema.Struct({...})` | plain data records | lightest weight; just shape + validation |
 | `Schema.Class<T>("Id")({...})` | data that needs **computed getters or helper methods** | a real class, so you can add `get`/methods alongside validation |
 | `Schema.TaggedClass<T>()("Tag", {...})` | a **non-error** variant in a discriminated union | injects the `_tag` literal for you |
-| `Schema.TaggedErrorClass<T>()("Tag", {...})` | **errors** | see [errors.md](errors.md) — flows through Effect's error channel |
+| `Schema.TaggedError<T>()("Tag", {...})` | **errors** | see [errors.md](errors.md) — flows through Effect's error channel |
 
 ```ts
 // Struct — pure record
@@ -195,7 +195,7 @@ Surfacing decode errors cleanly — squash the cause, format the issues, wrap in
 domain error:
 
 ```ts
-const decoded = Schema.decodeUnknownExit(schema)(data, { errors: "all", propertyOrder: "original" })
+const decoded = Schema.decodeUnknownExit(schema)(data, { errors: "all" })
 if (Exit.isSuccess(decoded)) return decoded.value as DeepMutable<S["Type"]>
 
 const error = Cause.squash(decoded.cause)
