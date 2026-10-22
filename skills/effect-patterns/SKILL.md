@@ -14,10 +14,10 @@ description: >-
   audio/sound effects, Effect scheduler internals, or non-Effect libraries
   like Zod or Drizzle.
 compatibility: >-
-  Requires Effect v4. The APIs throughout (Schema.TaggedErrorClass,
-  Context.Service, Schema.toTaggedUnion, Config.schema, Layer.effectContext)
-  do not exist in v3, and v3 idioms (Effect.Service, Schema.TaggedError) are
-  not what this skill teaches.
+  Requires Effect v4; samples are checked against effect 4.0.5. The APIs
+  throughout (Context.Service, Schema.toTaggedUnion, Config.schema,
+  Effect.result) do not exist in v3, and v3 idioms (Effect.Service,
+  Effect.either, Layer.scoped) are not what this skill teaches.
 ---
 
 # Effect Patterns
@@ -28,12 +28,20 @@ navigable the moment you've seen one — dependency wiring stays type-safe, and
 validation, errors, and IDs flow through a single `Schema`-based layer.
 
 **Effect v4 only.** None of this works on v3 — the API surface is different
-(`Schema.TaggedErrorClass` vs v3's `Schema.TaggedError`, `Context.Service` vs
-`Effect.Service`, and so on). When an API question isn't answered here, check
+(`Context.Service` vs `Effect.Service`, `Effect.result` vs `Effect.either`,
+and so on). When an API question isn't answered here, check
 in order: the nearest `AGENTS.md` / project Effect practices doc, the
 project-pinned `effect` package source and version in `node_modules`, and
 current upstream Effect source — before guessing from training data, which
 skews v3.
+
+**4.0 pre-releases differ.** The samples target effect 4.0.x. A project
+pinned to a 4.0 beta or RC sees older names: `Schema.TaggedErrorClass` (renamed
+`Schema.TaggedError` in beta.104), lowercase `Config.string` / `redacted` /
+`boolean` (capitalized in rc.113), and, before rc.118, `Schema.isStartsWith`
+(now `isStartingWith`) and the `effect/unstable/http`,
+`effect/unstable/httpapi`, `effect/unstable/persistence` paths (now
+`effect/http`, `effect/http-api`, `effect/persistence`).
 
 ## How to use this skill
 
@@ -46,14 +54,14 @@ what the task needs.
 | Dependency injection: `Context.Service`, `Layer.effect`/`sync`/`succeed`/`suspend`, composing one root `Layer`, `ManagedRuntime`, per-instance state, ambient context | [references/services-layers-runtime.md](references/services-layers-runtime.md) |
 | Modeling data with `Schema`: `Struct` vs `Class` vs `TaggedClass`, `optional`, unions, annotations, decode/encode, deriving types, `DeepMutable` | [references/schema.md](references/schema.md) |
 | Branded, prefix-checked IDs and attaching factory methods with `statics` | [references/branded-ids.md](references/branded-ids.md) |
-| Typed errors: `TaggedErrorClass`, reason unions, `Defect`, and catching with `catchTag` | [references/errors.md](references/errors.md) |
+| Typed errors: `TaggedError`, reason unions, `Defect`, and catching with `catchTag` | [references/errors.md](references/errors.md) |
 | Evolving wire/storage formats with parallel versioned schemas instead of migrations | [references/versioning.md](references/versioning.md) |
 | Designing the graph *across* many services: flat composition, hubs vs orchestrators, global vs per-scope scoping, resource lifecycle, tiered runtimes | [references/service-graph.md](references/service-graph.md) |
 | Concurrency: forking into scopes, `Ref`/`Deferred`/`Queue`/`PubSub`/`Semaphore`, bounded `concurrency`, interruption/cleanup, background daemons | [references/concurrency.md](references/concurrency.md) |
 | Interop with the non-Effect world: `tryPromise`/`async`, running effects at the edges, wrapping resources, carrying context across callbacks | [references/interop.md](references/interop.md) |
 | Error *recovery*: `Schedule` retries, timeouts, the `catch*` family, failure vs defect, graceful degradation | [references/error-recovery.md](references/error-recovery.md) |
 | Testing Effect code: layer-swapping harness, `Layer.mock`/`Layer.succeed` fakes, stateful dual-tag test services, `TestClock`, asserting via `Effect.exit`, scoped fixtures | [references/testing.md](references/testing.md) |
-| Runtime configuration: `Config` recipes, `Config.redacted`/`option`/`withDefault`, `ConfigProvider` layers, `layerConfig` helpers, config in tests | [references/config.md](references/config.md) |
+| Runtime configuration: `Config` recipes, `Config.Redacted`/`option`/`withDefault`, `ConfigProvider` layers, `layerConfig` helpers, config in tests | [references/config.md](references/config.md) |
 | Caching and memoization: `Cache.make`/`makeWith`, exit-aware TTL, concurrent-lookup dedupe, `Effect.cached`, when `RequestResolver` batching is (and isn't) worth it | [references/caching.md](references/caching.md) |
 | `Stream`: source/transform/consume choosers, long-lived consumers in layers, exposing streams from services, backpressure and buffers, keyed concurrency | [references/streams.md](references/streams.md) |
 | Outgoing HTTP: Effect `HttpClient`, adapter boundary shape, status classification + schema decoding, `retryTransient`/rate limiting, disciplined raw `fetch` | [references/http-clients.md](references/http-clients.md) |
@@ -70,7 +78,7 @@ behind each:
    tree-shaking and Node's native TS. Use flat exports + a self-reexport.
 3. **`schema.ts` per domain** — branded IDs, data shapes, and error classes live
    together, separate from the service that uses them.
-4. **Errors are `Schema.TaggedErrorClass`** — so they flow through Effect's typed
+4. **Errors are `Schema.TaggedError`** — so they flow through Effect's typed
    error channel and narrow under `catchTag`.
 5. **Version by parallel schema files, not migration code** — old formats stay
    readable through their own schemas.

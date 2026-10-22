@@ -63,6 +63,8 @@ automatically, so a single log line carries timestamp, level, message, your
 fields, and the active span — correlatable across concurrent work via an ambient
 run id. Choosing the level by calling the matching function (`logDebug` …
 `logError`) keeps level filtering a runtime concern, not a code-branching one.
+Set the floor with `References.MinimumLogLevel`. A `LogLevel` is a string
+literal (`"Info"`, `"Warn"`); v4 has no `LogLevel.fromName`.
 
 ## Metrics: available, opt-in, often deferred
 
@@ -86,6 +88,12 @@ export const AppLayer = Layer.mergeAll(/* all services */).pipe(
   Layer.provideMerge(Observability),   // every effect can now log and trace
 )
 ```
+
+It must be `provideMerge`, not `provide`. Loggers and tracers are
+context references with defaults, so `Layer.provide` type-checks while the
+fibers that run your effects (a `ManagedRuntime`, an
+`HttpRouter.toWebHandler` request) silently keep the default logger and
+tracer.
 
 Services never import a logger or tracer — they just call `Effect.log*` and define
 functions with `Effect.fn`, and the global layer decides where it all goes. Make

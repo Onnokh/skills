@@ -23,7 +23,7 @@ export const AppLayer = Layer.mergeAll(
   // ...every service, in any order
 ).pipe(
   Layer.provideMerge(Database.defaultLayer),   // shared infra for all of the above
-  Layer.provideMerge(HttpClient.defaultLayer),
+  Layer.provideMerge(FetchHttpClient.layer),
 )
 ```
 
@@ -92,10 +92,11 @@ of something that could be shared.
 
 Any service that holds a real resource — a spawned process, socket, file handle,
 external connection — should acquire it inside a `Scope` (via `acquireRelease`
-or `Scope.Scope`), not manage open/close by hand.
+or `Scope.Scope`), not manage open/close by hand. `Layer.effect` gives the
+acquisition the layer's scope; v4 has no separate `Layer.scoped`.
 
 ```ts
-const layer = Layer.scoped(
+const layer = Layer.effect(
   Service,
   Effect.gen(function* () {
     const conn = yield* Effect.acquireRelease(

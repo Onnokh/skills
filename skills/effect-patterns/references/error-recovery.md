@@ -44,7 +44,8 @@ Semantics worth knowing cold, because off-by-one retry bugs are silent:
 - `Schedule.spaced` waits after the work completes; `Schedule.fixed` aligns to
   a cadence regardless of how long the work took.
 - `Effect.retryOrElse(policy, onExhausted)` when exhausted retries need a
-  fallback or reporting effect; `Schedule.tapInput` to log each retried error.
+  fallback or reporting effect; `Schedule.tap(({ input }) => …)` to log each
+  retried error.
 - Retry only at the narrowest boundary, and only operations with **proven
   idempotency**. Exhausted failures should stay visible unless the boundary has
   a truthful fallback.
@@ -58,6 +59,7 @@ larger of its own backoff and the provider's delay:
 ```ts
 const providerRetrySchedule: Schedule.Schedule<RateLimited, RateLimited> =
   Schedule.exponential("200 millis").pipe(
+    Schedule.setInputType<RateLimited>(), // without it the input is `unknown`
     Schedule.jittered,
     Schedule.upTo({ times: 5 }),
     Schedule.passthrough,             // feed the error through to modifyDelay
@@ -137,9 +139,9 @@ Match the catch combinator to how precisely you want to discriminate:
 | --- | --- |
 | `catchTag` / `catchTags` | recover specific tagged errors (the common case) |
 | `catchIf(predicate, …)` | recover only when a type-guard/condition matches |
-| `catchAll` | collapse the whole failure channel into a recovery |
+| `catch` | collapse the whole failure channel into a recovery, "try this, else that" (v3's `catchAll` / `orElse`) |
 | `catchCause` | inspect the *full* cause — needed when code may sync-throw (defects) |
-| `orElse` / `orElseSucceed` | "try this, else that" / "else this default value" |
+| `orElseSucceed` | "else this default value" |
 | `orDie` | turn a recoverable failure into a fatal defect |
 
 ```ts
@@ -147,11 +149,11 @@ Match the catch combinator to how precisely you want to discriminate:
 svc.get(id).pipe(Effect.catchTag("NotFoundError", () => Effect.succeed(undefined)))
 
 // Recover only an expected subset, by predicate:
-svc.get(id).pipe(Effect.catchIf(NotFoundError.is, () => Effect.succeed([])))
+svc.get(id).pipe(Effect.catchIf(Schema.is(NotFoundError), () => Effect.succeed([])))
 ```
 
 A subtle but important one: when the code under a handler can throw *synchronously*
-(JSON/JSONC parsing, schema decode), use `catchCause`, not `catchTag`/`orElse` —
+(JSON/JSONC parsing, schema decode), use `catchCause`, not `catchTag`/`catch` —
 sync throws arrive as **defects**, which the failure-channel combinators won't
 catch. `Cause.squash(cause)` then extracts the underlying error for logging.
 
@@ -169,7 +171,7 @@ Tools for inspecting outcomes without throwing:
 
 ```ts
 const exit = yield* work.pipe(Effect.exit)        // Exit<A, E> — examine, log, decide
-const either = yield* work.pipe(Effect.either)    // Either<E, A> — branch in pure code
+const result = yield* work.pipe(Effect.result)    // Result<A, E> — branch in pure code
 const maybe = yield* work.pipe(Effect.option)     // Option<A> — failure → None
 ```
 

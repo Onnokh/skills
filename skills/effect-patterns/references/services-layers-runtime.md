@@ -97,6 +97,7 @@ effects against. Build it once and reuse it — pass a shared `memoMap` so layer
 that appear in multiple places are instantiated only once.
 
 ```ts
+export const memoMap = Layer.makeMemoMapUnsafe()
 export const Runtime = ManagedRuntime.make(AppLayer, { memoMap })
 // later:
 await Runtime.runPromise(SomeModule.use.doThing(args))
@@ -104,7 +105,8 @@ await Runtime.runPromise(SomeModule.use.doThing(args))
 
 A small `makeRuntime` helper that always threads the same `memoMap` keeps layer
 deduplication automatic. Route all service execution through it rather than
-constructing ad-hoc runtimes.
+constructing ad-hoc runtimes, and hand the same `memoMap` to
+`HttpRouter.toWebHandler` (see [interop.md](interop.md)).
 
 ## Per-instance state
 

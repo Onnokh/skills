@@ -13,6 +13,8 @@ couple of environments:
 
 ```ts
 // test/lib/effect.ts (sketch)
+import { TestClock, TestConsole } from "effect/testing"
+
 const testEnv = Layer.mergeAll(TestClock.layer(), TestConsole.layer)   // deterministic
 const liveEnv = TestConsole.layer                                       // real clock/fs
 
@@ -144,7 +146,7 @@ expect(error).toBeInstanceOf(NotFoundError)        // or match on _tag / error n
 
 `Effect.exit` captures success *and* failure as a value; `Cause.squash` pulls the
 underlying error out of the cause for assertion. For the success path you just
-assert on the returned value directly. (`Effect.either` is the lighter option when
+assert on the returned value directly. (`Effect.result` is the lighter option when
 you only care about the typed error, not the full cause.)
 
 ## Fixtures and setup via scope
