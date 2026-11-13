@@ -12,6 +12,14 @@ npx skills add Onnokh/skills
 npx skills add Onnokh/skills --skill <skill-name>
 ```
 
+## Reference
+
+- **[design](skills/design)** — Design new screens, flows and components, or review existing ones, with the `better-*` skills from [jakubkrehel/skills](https://github.com/jakubkrehel/skills) for accessibility, layout, writing, typography, color and UI polish.
+- **[animation](skills/animation)** — A router for [Emil Kowalski's animation skills](https://github.com/emilkowalski/skills): build, review, audit, choreograph, gestures, performance and more, on top of his design engineering philosophy.
+- **[effect-patterns](skills/effect-patterns)** — Effect-TS conventions for services, layers, schemas, errors, config, retries, caching, streams and HTTP clients.
+- **[plan-implementation](skills/plan-implementation)** — Gather the current state from the issue tracker and local repositories, then give an ordered plan and wait for go before any work starts.
+- **[rankstas-paradise](skills/rankstas-paradise)** — Query and update SEO plans, keyword demand and Search Console results for Sleevy, Missingmounts, Printfeest and Shadertown via the Ranksta's Paradise MCP.
+
 ## Design and animation
 
 `design` and `animation` are routers. They load other skills, so install those
@@ -35,19 +43,3 @@ npx skills add Onnokh/skills -g -y -s design -s animation
 | `animation` | `emil-design-eng` from [emilkowalski/skills](https://github.com/emilkowalski/skills) | the nine animation skills; Emil's full philosophy is in `PHILOSOPHY.md` |
 
 Both are MIT-licensed; each folder keeps the original `LICENSE`.
-
-## Adding a skill
-
-Create `skills/<skill-name>/SKILL.md`:
-
-```markdown
----
-name: skill-name
-description: What it does and when the agent should use it. This line drives triggering — be specific.
----
-
-Instructions for the agent go here.
-```
-
-Optional extras per skill: a `references/` folder with supporting docs the
-skill can point to, and `scripts/` for helper scripts.
