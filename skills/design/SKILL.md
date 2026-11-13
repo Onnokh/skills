@@ -1,23 +1,69 @@
 ---
 name: design
-description: Reviews a screen, flow or whole interface across accessibility, layout, writing, typography, color and UI polish, and returns one ranked report.
+description: Designs and reviews interfaces with the better-* skills for accessibility, layout, writing, typography, color and UI polish. Use to create a new screen, flow, component or frame (in code, in a design tool through its MCP, or as a spec) and to review an existing one into one ranked report.
 ---
 
-# Interface
+# Design
 
-This skill runs a cross-discipline review. It routes the interface to each `better-*` skill, collects their evidence and consolidates one ranked verdict.
+This skill routes interface work to the `better-*` skills and applies their rules. It has two modes: **Create** and **Review**. The rules belong to the domain skills. Accessibility belongs to `better-accessibility`, structure to `better-layout`, copy to `better-writing`, type to `better-typography`, color to `better-colors`, visual polish and motion to `better-ui`. Read each skill at `../<skill>/SKILL.md` relative to this skill's base directory, and read its reference files only when a decision needs them.
 
-Orchestration is all it owns. Accessibility rules belong to `better-accessibility`, structure to `better-layout`, copy to `better-writing`, type to `better-typography`, color to `better-colors`, visual polish and motion to `better-ui`.
+## Pick the mode
+
+| The user wants to… | Mode |
+| --- | --- |
+| Design, build, draft or mock up something new: a screen, flow, component, dialog or frame | **Create** |
+| Change or extend an existing interface | **Create**, scoped to the change |
+| Check, audit or critique an interface that exists | **Review** |
+| A review of a branch, PR or uncommitted change | Review, through `interface-review` (step 2 of Review) |
+
+When a request is both, create first, then run a `quick` review on the result. If the mode is unclear, assume Create when nothing exists yet.
+
+## Create
+
+Use the domain skills as design rules, not as an after-the-fact checklist.
+
+### 1. Resolve what and where
+
+Name the piece and the medium. The medium is what the user asks for or what the project uses: code in the project's own stack, a design tool through its connected MCP (such as Figma or Doop), or a written spec. Do not refuse a medium because this skill is about rules; the rules apply in any medium.
+
+### 2. Recon
+
+Find the existing components, design tokens, spacing and type scale, and the project's docs about its interface (`CLAUDE.md`, `AGENTS.md`, `CONTRIBUTING.md`, design-system docs, design-tool libraries). Reuse before you add.
+
+If the project says someone else owns design decisions, say that your result is a proposal for them, then continue.
+
+### 3. Apply the domains in order
+
+Load only the domains the piece touches, and scale the depth to its size. A small dialog needs a few rules from each skill, not every reference file.
+
+1. `better-layout`: grouping, reading order, one primary action, room for growth and translation.
+2. `better-writing`: labels, buttons, errors, empty states, in the product's existing voice.
+3. `better-typography`: roles from the existing type scale, wrapping, numbers, truncation.
+4. `better-colors`: existing semantic tokens in their roles, contrast pairs.
+5. `better-ui`: radius, shadows, icons, motion. For more motion work, use the `animation` skill if it is installed.
+6. `better-accessibility`: names, focus, keyboard path, hit areas, reduced motion. Build these in; do not leave them for review.
+
+### 4. Cover the states
+
+Design the empty, loading, error, disabled and narrow-width states where they exist, and long or translated text.
+
+### 5. Check and hand over
+
+Run a `quick` Review on what you made and fix every escalation trigger before you hand it over. Then report briefly: what you made, the few decisions that follow a named rule, and the open questions. Give the full review table only when asked.
+
+## Review
+
+Everything below is the Review mode. This mode collects the evidence from each domain skill and consolidates one ranked verdict.
 
 Change-scoped review of uncommitted work, branches and pull requests belongs to `interface-review`.
 
-## Evidence, not taste
+### Evidence, not taste
 
 Press hard on the escalation triggers and leave deliberate project choices alone. A trigger is a failure whatever the style guide says. A density, radius or voice you merely disagree with is not a finding.
 
 The bar for reporting is evidence. The bar for `Approve` is that you inspected what you claim to have inspected.
 
-## 1. Resolve the scope first
+### 1. Resolve the scope first
 
 Infer the screen, flow, feature or repository scope from the request and current workspace. State the resolved scope in the output.
 
@@ -25,13 +71,13 @@ Cover all of it in every domain, including the empty, loading, error and narrow-
 
 When the scope is too large to inspect credibly, narrow it to one complete flow. Take the one the request centers on, or failing that the entry path every user must pass through. State the boundary and what it excluded. Never imply uninspected surfaces were reviewed.
 
-## 2. Send a change to `interface-review`
+### 2. Send a change to `interface-review`
 
 A request naming a branch, pull request, commit range or uncommitted changes is a change review. Say so and ask the user to run `interface-review`, which is user-invoked and cannot be started from here. Never resolve a change scope yourself, because a guessed diff gives the report a scope nobody can check.
 
 When `interface-review` hands a review back, apply everything below to it. The cap and the verdict cover `Introduced` and `Regression` findings only, so a change whose only findings are `Pre-existing` is an `Approve`.
 
-## 3. Recon before judgment
+### 3. Recon before judgment
 
 Identify the framework, styling system, component library, design tokens, supported viewports and any preview or test command. Write every fix in the project's own idiom, never as a request to adopt a different stack.
 
@@ -39,7 +85,7 @@ Then read what the project has written about its own interface: `CONTRIBUTING.md
 
 A documented convention settles matters of taste but never excuses a trigger or a domain rule violation. What it changes is **where** you report. When a guideline or shared token is the cause, report it once against that source, with the components as its locations.
 
-## 4. Use domain skills as the sources of truth
+### 4. Use domain skills as the sources of truth
 
 Load every owning skill below and complete each domain review before consolidation. Review in this order so foundational failures are not hidden by polish:
 
@@ -56,15 +102,15 @@ If an owning skill is unavailable, mark that domain `Not reviewed`, name it and 
 
 When two skills appear to cover one issue, assign it to the owner of the underlying rule and note secondary effects in the **Why** cell.
 
-## 5. Verify what can be verified
+### 5. Verify what can be verified
 
 Run the safe, relevant checks the project offers. Inspect the rendered interface when runtime behavior or visual judgment matters, and report the exact command or interaction and its result. A check you cannot run is **Not verified**, never a finding.
 
-## Require evidence
+### Require evidence
 
 Every finding cites `path/to/file:line` and shows the current implementation. When runtime behavior determines the result, source alone cannot support a visual finding and a screenshot alone cannot support a code finding.
 
-## Rank by user impact
+### Rank by user impact
 
 Use one shared severity scale:
 
@@ -94,7 +140,7 @@ Triggers rank above every other finding. When more fire than the cap allows, lis
 
 These set severity, not new rules. The owning skill decides whether the symptom is present; this list decides what it costs.
 
-## Prefer the cheaper fix
+### Prefer the cheaper fix
 
 Severity says how bad a finding is; this says which fix to propose. When more than one would work, take the earliest that does:
 
@@ -106,15 +152,15 @@ Severity says how bad a finding is; this says which fix to propose. When more th
 
 When the code under review adds what **Delete** would fix, that is a finding, and its **After** is the deletion.
 
-## Consolidate systemic findings
+### Consolidate systemic findings
 
 One root cause is one finding, with every confirmed location in the same row. Report at most 15 findings. Never pad toward the cap; a short review or no findings is a valid result.
 
-## Review without mutating by default
+### Review without mutating by default
 
 Treat a review request as read-only. Do not edit source unless the user also asks you to implement the findings. When they do, keep the consolidated report as the change scope and re-run the relevant verification afterward.
 
-## Before you finish
+### Before you finish
 
 | Mistake | Fix |
 | --- | --- |
@@ -127,6 +173,6 @@ Treat a review request as read-only. Do not edit source unless the user also ask
 | An **After** that adds a wrapper, token or ARIA attribute | Check whether a deletion or the native element fixes it first |
 | A fix written in a library or styling system the project does not use | Rewrite it in the project's own idiom |
 
-## Review output format
+### Review output format
 
 The format lives in [review-format.md](review-format.md): scope and coverage, the findings table, verification and the verdict. A review is not finished until its findings are reported there.
