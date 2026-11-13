@@ -12,6 +12,30 @@ npx skills add Onnokh/skills
 npx skills add Onnokh/skills --skill <skill-name>
 ```
 
+## Design and animation
+
+`design` and `animation` are routers. They load other skills, so install those
+too. One command installs all of them, globally, for every detected agent:
+
+```sh
+npx skills add jakubkrehel/skills -g -y \
+  -s better-accessibility -s better-layout -s better-writing \
+  -s better-typography -s better-colors -s better-ui && \
+npx skills add emilkowalski/skills -g -y \
+  -s animate -s choreograph -s gestures -s animation-performance \
+  -s review-animations -s improve-animations \
+  -s find-animation-opportunities -s remove-animations \
+  -s animation-vocabulary && \
+npx skills add Onnokh/skills -g -y -s design -s animation
+```
+
+| Router | Based on | Loads |
+| --- | --- | --- |
+| `design` | `better-interface` from [jakubkrehel/skills](https://github.com/jakubkrehel/skills) | the six `better-*` skills |
+| `animation` | `emil-design-eng` from [emilkowalski/skills](https://github.com/emilkowalski/skills) | the nine animation skills; Emil's full philosophy is in `PHILOSOPHY.md` |
+
+Both are MIT-licensed; each folder keeps the original `LICENSE`.
+
 ## Adding a skill
 
 Create `skills/<skill-name>/SKILL.md`:
