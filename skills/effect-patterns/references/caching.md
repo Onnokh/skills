@@ -63,6 +63,33 @@ const context = yield* Layer.build(apiClientLayer(options))  // needs Scope
 const lookup = (id: string) => Context.get(context, ApiClient).getRecord(id)
 ```
 
+## Shared scoped resources: `RcMap` / `RcRef`
+
+When consumers share a *resource* (checkout dir, connection, client) per key
+and it should be released when the last one is done, use `RcMap` — reference
+counted, not TTL-evicted. `RcRef` is the single-resource version.
+
+```ts
+const checkouts = yield* RcMap.make({
+  lookup: (repo: Repository) => cloneScoped(repo),  // may be scoped
+  idleTimeToLive: "5 seconds",
+  capacity: 10,
+})
+const review = RcMap.get(checkouts, repo).pipe(
+  Effect.flatMap(reviewDependencies),
+  Effect.scoped,                                     // after the work, not before
+)
+```
+
+- `Effect.scoped` placed before the work releases the resource too early.
+- Without `idleTimeToLive`, the next request after the count hits zero pays a
+  full re-acquire.
+- `capacity` counts entries (idle and acquiring included) and adds
+  `Cause.ExceededCapacityError` to `get` — keep it visible so callers can retry.
+- `invalidate` is not an immediate release; current holders keep the old value.
+  `getOption` reads without acquiring. Keys use structural equality
+  (`Data.Class`).
+
 ## Request batching (`Effect.request` + `RequestResolver`)
 
 Batching exists for backends with a **real batch endpoint** — the resolver

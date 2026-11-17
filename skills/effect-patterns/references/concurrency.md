@@ -42,6 +42,11 @@ of coordination, and the choice communicates intent:
 | A buffered hand-off between producer and consumer | `Queue` |
 | Broadcast one event to many subscribers | `PubSub` |
 | Limit how many fibers do X at once / mutual exclusion | `Semaphore` |
+| Jobs that must survive a restart, or producers/workers in other processes | `PersistedQueue` (`effect/persistence`) |
+
+`PersistedQueue` delivers at-least-once: make the `take` handler idempotent,
+pass a stable `id` to `offer` to drop duplicate submissions, and swap the store
+by layer (`layerStoreRedis` / `layerStoreSql`; `layerStoreMemory` in tests).
 
 ```ts
 // Deferred: one fiber blocks until another completes it
