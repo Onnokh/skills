@@ -49,6 +49,10 @@ Semantics worth knowing cold, because off-by-one retry bugs are silent:
 - Retry only at the narrowest boundary, and only operations with **proven
   idempotency**. Exhausted failures should stay visible unless the boundary has
   a truthful fallback.
+- Persisted delivery (queues, cluster messages) is at-least-once: dedupe with
+  an idempotency key. In a durable `Workflow`, keep every side effect, clock
+  read, and random value inside an `Activity` — code outside one re-runs on
+  every replay.
 
 ### Rate-limit-aware retry
 

@@ -8,7 +8,8 @@ description: >-
   layers instantiated more than once); Schema.Struct vs Schema.Class, branded
   IDs, or tagged errors; evolving a persisted/wire schema without a risky
   migration; runtime config via Config/ConfigProvider; retry/backoff
-  Schedules; caches with TTL; Stream or queue-backed event sources; outgoing
+  Schedules; caches with TTL; shared scoped resources (RcMap/RcRef); Stream
+  or queue-backed event sources; durable jobs (PersistedQueue); outgoing
   HTTP clients with typed errors; and "how do Effect codebases usually
   handle…" questions. Not for generic side effects, React useEffect,
   audio/sound effects, Effect scheduler internals, or non-Effect libraries
@@ -62,7 +63,7 @@ what the task needs.
 | Error *recovery*: `Schedule` retries, timeouts, the `catch*` family, failure vs defect, graceful degradation | [references/error-recovery.md](references/error-recovery.md) |
 | Testing Effect code: layer-swapping harness, `Layer.mock`/`Layer.succeed` fakes, stateful dual-tag test services, `TestClock`, asserting via `Effect.exit`, scoped fixtures | [references/testing.md](references/testing.md) |
 | Runtime configuration: `Config` recipes, `Config.Redacted`/`option`/`withDefault`, `ConfigProvider` layers, `layerConfig` helpers, config in tests | [references/config.md](references/config.md) |
-| Caching and memoization: `Cache.make`/`makeWith`, exit-aware TTL, concurrent-lookup dedupe, `Effect.cached`, when `RequestResolver` batching is (and isn't) worth it | [references/caching.md](references/caching.md) |
+| Caching and memoization: `Cache.make`/`makeWith`, exit-aware TTL, concurrent-lookup dedupe, `RcMap`/`RcRef` shared resources, `Effect.cached`, when `RequestResolver` batching is (and isn't) worth it | [references/caching.md](references/caching.md) |
 | `Stream`: source/transform/consume choosers, long-lived consumers in layers, exposing streams from services, backpressure and buffers, keyed concurrency | [references/streams.md](references/streams.md) |
 | Outgoing HTTP: Effect `HttpClient`, adapter boundary shape, status classification + schema decoding, `retryTransient`/rate limiting, disciplined raw `fetch` | [references/http-clients.md](references/http-clients.md) |
 | Observability: `Effect.fn` spans, structured logging + `annotateLogs`, metrics, one global observability layer | [references/observability.md](references/observability.md) |
@@ -86,8 +87,10 @@ behind each:
    (tenant/request) state is the load-bearing call in the graph. See
    service-graph.
 7. **Effect ships the hard part — reach for the primitive** — retry is a
-   `Schedule`, a per-key cache with TTL/dedupe is `effect/Cache`, config is
-   `Config` recipes, a many-valued source is a `Stream`. The hand-rolled
+   `Schedule`, a per-key cache with TTL/dedupe is `effect/Cache`, a shared
+   keyed resource is `RcMap`, a job that must survive restarts is
+   `PersistedQueue`, config is `Config` recipes, a many-valued source is a
+   `Stream`. The hand-rolled
    equivalents (`while`+sleep, `Map`+prune, `process.env`, ad-hoc loops) are
    always missing the hard part: jitter, in-flight dedupe, backpressure,
    interruption.
