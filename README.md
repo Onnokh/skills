@@ -19,6 +19,8 @@ npx skills add Onnokh/skills --skill <skill-name>
 - **[effect-patterns](skills/effect-patterns)** — Effect-TS conventions for services, layers, schemas, errors, config, retries, caching, streams and HTTP clients.
 - **[plan-implementation](skills/plan-implementation)** — Gather the current state from the issue tracker and local repositories, then give an ordered plan and wait for go before any work starts.
 - **[rankstas-paradise](skills/rankstas-paradise)** — Query and update SEO plans, keyword demand and Search Console results for Sleevy, Missingmounts, Printfeest and Shadertown via the Ranksta's Paradise MCP.
+- **[browse](skills/browse)** — Do browser work (open, read, click, fill in pages) in your own logged-in browser with [browse](https://github.com/anomalyco/browse).
+- **[computer](skills/computer)** — Control native macOS desktop apps through their accessibility tree with the `agent-desktop` MCP or CLI.
 
 ## Design and animation
 
