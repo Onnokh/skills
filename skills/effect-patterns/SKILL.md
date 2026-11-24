@@ -15,7 +15,7 @@ description: >-
   audio/sound effects, Effect scheduler internals, or non-Effect libraries
   like Zod or Drizzle.
 compatibility: >-
-  Requires Effect v4; samples are checked against effect 4.0.5. The APIs
+  Requires Effect v4; samples are checked against effect 4.1.5. The APIs
   throughout (Context.Service, Schema.toTaggedUnion, Config.schema,
   Effect.result) do not exist in v3, and v3 idioms (Effect.Service,
   Effect.either, Layer.scoped) are not what this skill teaches.
@@ -36,8 +36,12 @@ project-pinned `effect` package source and version in `node_modules`, and
 current upstream Effect source — before guessing from training data, which
 skews v3.
 
-**4.0 pre-releases differ.** The samples target effect 4.0.x. A project
-pinned to a 4.0 beta or RC sees older names: `Schema.TaggedErrorClass` (renamed
+**Older 4.x versions differ.** The samples target effect 4.1.x. A project on
+4.0.x does not have `HttpClient.timeout`, `HttpClient.isTransientError` /
+`isTransientResponse` (added in 4.1.0), or the `deduplicate` option of
+`PersistedQueue` `offer` (4.1.3); before 4.0.6, composed layers were not
+memoized by identity (see services-layers-runtime). A project pinned to a 4.0
+beta or RC sees older names: `Schema.TaggedErrorClass` (renamed
 `Schema.TaggedError` in beta.104), lowercase `Config.string` / `redacted` /
 `boolean` (capitalized in rc.113), and, before rc.118, `Schema.isStartsWith`
 (now `isStartingWith`) and the `effect/unstable/http`,
@@ -60,12 +64,12 @@ what the task needs.
 | Designing the graph *across* many services: flat composition, hubs vs orchestrators, global vs per-scope scoping, resource lifecycle, tiered runtimes | [references/service-graph.md](references/service-graph.md) |
 | Concurrency: forking into scopes, `Ref`/`Deferred`/`Queue`/`PubSub`/`Semaphore`, bounded `concurrency`, interruption/cleanup, background daemons | [references/concurrency.md](references/concurrency.md) |
 | Interop with the non-Effect world: `tryPromise`/`async`, running effects at the edges, wrapping resources, carrying context across callbacks | [references/interop.md](references/interop.md) |
-| Error *recovery*: `Schedule` retries, timeouts, the `catch*` family, failure vs defect, graceful degradation | [references/error-recovery.md](references/error-recovery.md) |
+| Error *recovery*: `Schedule` retries, timeouts, the `catch*` family, failure vs defect, graceful degradation, circuit breakers | [references/error-recovery.md](references/error-recovery.md) |
 | Testing Effect code: layer-swapping harness, `Layer.mock`/`Layer.succeed` fakes, stateful dual-tag test services, `TestClock`, asserting via `Effect.exit`, scoped fixtures | [references/testing.md](references/testing.md) |
 | Runtime configuration: `Config` recipes, `Config.Redacted`/`option`/`withDefault`, `ConfigProvider` layers, `layerConfig` helpers, config in tests | [references/config.md](references/config.md) |
 | Caching and memoization: `Cache.make`/`makeWith`, exit-aware TTL, concurrent-lookup dedupe, `RcMap`/`RcRef` shared resources, `Effect.cached`, when `RequestResolver` batching is (and isn't) worth it | [references/caching.md](references/caching.md) |
 | `Stream`: source/transform/consume choosers, long-lived consumers in layers, exposing streams from services, backpressure and buffers, keyed concurrency | [references/streams.md](references/streams.md) |
-| Outgoing HTTP: Effect `HttpClient`, adapter boundary shape, status classification + schema decoding, `retryTransient`/rate limiting, disciplined raw `fetch` | [references/http-clients.md](references/http-clients.md) |
+| Outgoing HTTP: Effect `HttpClient`, adapter boundary shape, status classification + schema decoding, `retryTransient`/`timeout`/rate limiting, disciplined raw `fetch` | [references/http-clients.md](references/http-clients.md) |
 | Observability: `Effect.fn` spans, structured logging + `annotateLogs`, metrics, one global observability layer | [references/observability.md](references/observability.md) |
 
 ## The non-negotiables

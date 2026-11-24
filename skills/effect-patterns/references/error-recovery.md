@@ -199,6 +199,13 @@ fireAndForget.pipe(Effect.ignore, Effect.forkScoped)          // don't care abou
 response.stream.pipe(Stream.catchCause(() => Stream.empty))   // stream dies → end cleanly
 ```
 
+When a dependency fails for a long time, stop calling it: `CircuitBreaker`
+(`effect/persistence`, experimental) keeps one circuit per key, with
+`layerStoreMemory` or `layerStoreRedis` for the state, and
+`HttpClient.withCircuitBreaker` applies it to a client. The breaker never
+waits: put `Effect.retry` and `Effect.timeout` inside it, so it sees one
+outcome per call, and retry its rejections outside it.
+
 The skill is matching severity to consequence: a broken global config → fall back
 to defaults and log; a critical write → `orDie`; a best-effort notification →
 `ignore`.

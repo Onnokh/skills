@@ -45,7 +45,9 @@ of coordination, and the choice communicates intent:
 | Jobs that must survive a restart, or producers/workers in other processes | `PersistedQueue` (`effect/persistence`) |
 
 `PersistedQueue` delivers at-least-once: make the `take` handler idempotent,
-pass a stable `id` to `offer` to drop duplicate submissions, and swap the store
+pass a stable `id` to `offer` to drop duplicate submissions (the default
+`deduplicate: "untilRemoved"` keeps the id reserved as an idempotency key;
+`"untilExecuted"` lets the same id run again after it finishes), and swap the store
 by layer (`layerStoreRedis` / `layerStoreSql`; `layerStoreMemory` in tests).
 
 ```ts
