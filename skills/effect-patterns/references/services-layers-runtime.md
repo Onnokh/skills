@@ -103,6 +103,14 @@ export const Runtime = ManagedRuntime.make(AppLayer, { memoMap })
 await Runtime.runPromise(SomeModule.use.doThing(args))
 ```
 
+Within one memo map, a layer value is built once, however many parents
+reference it. Since effect 4.0.6 this applies to composed layers too
+(`Layer.provide`, `provideMerge`, `mergeAll`), not only to leaf layers, so a
+shared `defaultLayer` chain no longer rebuilds once per path. A shared composed
+layer shares everything inside it, including dependencies wrapped in
+`Layer.fresh`; wrap the composed layer itself in `Layer.fresh` when a caller
+needs its own copy.
+
 A small `makeRuntime` helper that always threads the same `memoMap` keeps layer
 deduplication automatic. Route all service execution through it rather than
 constructing ad-hoc runtimes, and hand the same `memoMap` to

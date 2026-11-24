@@ -43,8 +43,11 @@ The `withDefault` vs `orElse` distinction is the load-bearing one: a typo'd
 
 ## Providers
 
-The default provider is `ConfigProvider.fromEnv()`. Replace or extend it with
-layers rather than mutating the environment:
+The default provider is `ConfigProvider.fromEnv()`. Since effect 4.1.5 it
+reads the environment at the first lookup, not when it is created; use
+`ConfigProvider.fromEnvRecord({ ...process.env })` to take a snapshot at a
+chosen moment. Replace or extend it with layers rather than mutating the
+environment:
 
 - `ConfigProvider.layer(provider)` — replace the active provider for an app or
   test suite.

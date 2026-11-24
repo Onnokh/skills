@@ -50,7 +50,15 @@ Three tiers, from generic to domain-aware:
   timeouts, and 408/429/500/502/503/504, honouring `Retry-After`. Always pass
   `times` or a `schedule`: with neither it retries without limit. Order
   matters: an `HttpClient.transform` piped *before* it runs once per attempt,
-  one piped after wraps all attempts.
+  one piped after wraps all attempts. `HttpClient.isTransientError` and
+  `isTransientResponse` are the predicates it uses; reuse them in a custom
+  `Effect.retry` `while` instead of copying the status list.
+- `HttpClient.timeout(duration)` — a per-client response timeout that fails
+  with an `HttpClientError` (a `TransportError`), so the client keeps its
+  standard type and `retryTransient` retries it. Order matters again:
+  `timeout` piped before `retryTransient` gives each attempt its own budget;
+  piped after, it bounds the whole retry loop. Prefer it to `Effect.timeout`
+  around each call.
 - `HttpClient.withRateLimiter(...)` — proactive pacing that learns from
   rate-limit / `Retry-After` headers. Requires a `limiter` plus initial
   window/limit/key options; adds `RateLimiterError` to the error channel and
