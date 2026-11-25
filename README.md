@@ -21,6 +21,7 @@ npx skills add Onnokh/skills --skill <skill-name>
 - **[rankstas-paradise](skills/rankstas-paradise)** — Query and update SEO plans, keyword demand and Search Console results for Sleevy, Missingmounts, Printfeest and Shadertown via the Ranksta's Paradise MCP.
 - **[browse](skills/browse)** — Do browser work (open, read, click, fill in pages) in your own logged-in browser with [browse](https://github.com/anomalyco/browse).
 - **[computer](skills/computer)** — Control native macOS desktop apps through their accessibility tree with the `agent-desktop` MCP or CLI.
+- **[clean-copy](skills/clean-copy)** — Remove interface copy that must not be there: captions that repeat a label, hints about problems the user does not have, and warnings left from bugs that are fixed.
 
 ## Design and animation
 
