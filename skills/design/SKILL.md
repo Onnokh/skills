@@ -1,11 +1,11 @@
 ---
 name: design
-description: Designs and reviews interfaces with the better-* skills for accessibility, layout, writing, typography, color and UI polish. Use to create a new screen, flow, component or frame (in code, in a design tool through its MCP, or as a spec) and to review an existing one into one ranked report.
+description: Designs and reviews interfaces with the better-* skills for accessibility, layout, writing, typography, color and UI polish, and aligns edges with the gridlines skill. Use to create a new screen, flow, component or frame (in code, in a design tool through its MCP, or as a spec), to review an existing one into one ranked report, or to align edges and fix padding or margins.
 ---
 
 # Design
 
-This skill routes interface work to the `better-*` skills and applies their rules. It has two modes: **Create** and **Review**. The rules belong to the domain skills. Accessibility belongs to `better-accessibility`, structure to `better-layout`, copy to `better-writing`, type to `better-typography`, color to `better-colors`, visual polish and motion to `better-ui`. If `clean-copy` is installed, it decides which copy must exist before `better-writing` phrases it. Read each skill at `../<skill>/SKILL.md` relative to this skill's base directory, and read its reference files only when a decision needs them.
+This skill routes interface work to the `better-*` skills and applies their rules. It has three modes: **Create**, **Review** and **Gridlines**. The rules belong to the domain skills. Accessibility belongs to `better-accessibility`, structure to `better-layout`, copy to `better-writing`, type to `better-typography`, color to `better-colors`, visual polish and motion to `better-ui`. If `clean-copy` is installed, it decides which copy must exist before `better-writing` phrases it. If `gridlines` is installed, it owns the horizontal edges and the vertical centre of rows inside `better-layout`: it measures them with guides instead of by eye. Read each skill at `../<skill>/SKILL.md` relative to this skill's base directory, and read its reference files only when a decision needs them.
 
 ## Pick the mode
 
@@ -15,6 +15,7 @@ This skill routes interface work to the `better-*` skills and applies their rule
 | Change or extend an existing interface | **Create**, scoped to the change |
 | Check, audit or critique an interface that exists | **Review** |
 | A review of a branch, PR or uncommitted change | Review, through `interface-review` (step 2 of Review) |
+| Align edges, fix padding or margins, do the gridline or margin exercise, or a layout that "looks off" because of its edges | **Gridlines**: load `gridlines` and follow its process |
 
 When a request is both, create first, then run a `quick` review on the result. If the mode is unclear, assume Create when nothing exists yet.
 
@@ -36,7 +37,7 @@ If the project says someone else owns design decisions, say that your result is 
 
 Load only the domains the piece touches, and scale the depth to its size. A small dialog needs a few rules from each skill, not every reference file.
 
-1. `better-layout`: grouping, reading order, one primary action, room for growth and translation.
+1. `better-layout`: grouping, reading order, one primary action, room for growth and translation. Put every container on the project's recorded edge lines (text line, box line, trailing line); when the piece renders and `gridlines` is installed, draw its guides and fix every miss before you hand it over.
 2. `better-writing`: labels, buttons, errors, empty states, in the product's existing voice. Before you write a caption, hint or helper text, use `clean-copy` if it is installed to decide whether it must exist.
 3. `better-typography`: roles from the existing type scale, wrapping, numbers, truncation.
 4. `better-colors`: existing semantic tokens in their roles, contrast pairs.
@@ -97,6 +98,8 @@ Load every owning skill below and complete each domain review before consolidati
 6. `better-ui`
 
 For copy, also load `clean-copy` if it is installed. Report the strings it cuts under `better-writing`, with the **After** as the deletion.
+
+For alignment, also load `gridlines` if it is installed and the interface renders. Draw its guides on the pages and overlays in scope, and report every confirmed miss of 2px or more under `better-layout`, with the container's line as the **After** and the probe's measurement as the evidence. One container padding is one finding, with its rows as the locations.
 
 From each, take its principles, its references and its verification checks. Its severity ladder and its format are for standalone use; the ones in this file replace them.
 
