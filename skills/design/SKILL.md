@@ -5,7 +5,7 @@ description: Designs and reviews interfaces with the better-* skills for accessi
 
 # Design
 
-This skill routes interface work to the `better-*` skills and applies their rules. It has two modes: **Create** and **Review**. The rules belong to the domain skills. Accessibility belongs to `better-accessibility`, structure to `better-layout`, copy to `better-writing`, type to `better-typography`, color to `better-colors`, visual polish and motion to `better-ui`. Read each skill at `../<skill>/SKILL.md` relative to this skill's base directory, and read its reference files only when a decision needs them.
+This skill routes interface work to the `better-*` skills and applies their rules. It has two modes: **Create** and **Review**. The rules belong to the domain skills. Accessibility belongs to `better-accessibility`, structure to `better-layout`, copy to `better-writing`, type to `better-typography`, color to `better-colors`, visual polish and motion to `better-ui`. If `clean-copy` is installed, it decides which copy must exist before `better-writing` phrases it. Read each skill at `../<skill>/SKILL.md` relative to this skill's base directory, and read its reference files only when a decision needs them.
 
 ## Pick the mode
 
@@ -37,7 +37,7 @@ If the project says someone else owns design decisions, say that your result is 
 Load only the domains the piece touches, and scale the depth to its size. A small dialog needs a few rules from each skill, not every reference file.
 
 1. `better-layout`: grouping, reading order, one primary action, room for growth and translation.
-2. `better-writing`: labels, buttons, errors, empty states, in the product's existing voice.
+2. `better-writing`: labels, buttons, errors, empty states, in the product's existing voice. Before you write a caption, hint or helper text, use `clean-copy` if it is installed to decide whether it must exist.
 3. `better-typography`: roles from the existing type scale, wrapping, numbers, truncation.
 4. `better-colors`: existing semantic tokens in their roles, contrast pairs.
 5. `better-ui`: radius, shadows, icons, motion. For more motion work, use the `animation` skill if it is installed.
@@ -95,6 +95,8 @@ Load every owning skill below and complete each domain review before consolidati
 4. `better-typography`
 5. `better-colors`
 6. `better-ui`
+
+For copy, also load `clean-copy` if it is installed. Report the strings it cuts under `better-writing`, with the **After** as the deletion.
 
 From each, take its principles, its references and its verification checks. Its severity ladder and its format are for standalone use; the ones in this file replace them.
 

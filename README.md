@@ -37,7 +37,7 @@ npx skills add emilkowalski/skills -g -y \
   -s review-animations -s improve-animations \
   -s find-animation-opportunities -s remove-animations \
   -s animation-vocabulary && \
-npx skills add Onnokh/skills -g -y -s design -s animation
+npx skills add Onnokh/skills -g -y -s design -s animation -s clean-copy
 ```
 
 | Router | Based on | Loads |
